@@ -107,6 +107,10 @@
         <!-- Quotes will be populated by JavaScript -->
     </div>
 
+    <footer class="w-full max-w-4xl text-center py-8 mt-8 text-gray-400 text-sm">
+        <p>&copy; <span id="currentYear"></span> Houy Grégory. Tous droits réservés.</p>
+    </footer>
+
     <script>
         const allQuotes = [
             { id: 1, text: "La seule façon de faire du bon travail est d'aimer ce que vous faites.", author: "Steve Jobs", category: ["Motivation", "Travail"] },
@@ -409,7 +413,32 @@
             { id: 298, text: "L'amitié est le plus grand des biens.", author: "Anonyme", category: ["Amitié", "Bienfait"] },
             { id: 299, text: "La chance est le coup de pouce du destin.", author: "Anonyme", category: ["Chance", "Destin"] },
             { id: 300, text: "Le bonheur est une chose qui se multiplie en se partageant.", author: "Anonyme", category: ["Bonheur", "Partage"] },
-            { id: 301, text: "Au lieu de rêver ta vie, vis ton rêve.", author: "Anonyme", category: ["Inspiration", "Rêve", "Action"] }
+            { id: 301, text: "Au lieu de rêver ta vie, vis ton rêve.", author: "Anonyme", category: ["Inspiration", "Rêve", "Action"] },
+            // Nouvelles citations ajoutées
+            { id: 302, text: "Le plus grand secret du bonheur est d'être bien avec soi-même.", author: "Bernard de Fontenelle", category: ["Bonheur", "Sagesse"] },
+            { id: 303, text: "La persévérance est une qualité indispensable pour réussir.", author: "Anonyme", category: ["Motivation", "Persévérance", "Succès"] },
+            { id: 304, text: "La vie est un défi à relever, un bonheur à mériter, une aventure à tenter.", author: "Mère Teresa", category: ["Vie", "Défi", "Bonheur", "Aventure"] },
+            { id: 305, text: "N'attendez pas d'être heureux pour sourire, souriez plutôt pour être heureux.", author: "Edward L. Krame", category: ["Bonheur", "Positivité"] },
+            { id: 306, text: "Le succès, c'est l'art d'aller d'échec en échec sans perdre son enthousiasme.", author: "Winston Churchill", category: ["Motivation", "Persévérance", "Succès"] },
+            { id: 307, text: "Chaque pas compte, même le plus petit.", author: "Anonyme", category: ["Motivation", "Progrès"] },
+            { id: 308, text: "Il n'y a pas de vent favorable pour celui qui ne sait où il va.", author: "Sénèque", category: ["Sagesse", "Direction", "Objectif"] },
+            { id: 309, text: "La créativité est de relier les choses.", author: "Steve Jobs", category: ["Créativité", "Innovation"] },
+            { id: 310, text: "Le plus grand obstacle n'est pas le manque de ressources, mais le manque de volonté.", author: "Anonyme", category: ["Motivation", "Volonté"] },
+            { id: 311, text: "Apprenez d'hier, vivez pour aujourd'hui, espérez pour demain.", author: "Albert Einstein", category: ["Sagesse", "Apprentissage", "Vie"] },
+            { id: 312, text: "La vie est 10% ce qui vous arrive et 90% comment vous y réagissez.", author: "Charles R. Swindoll", category: ["Vie", "Attitude"] },
+            { id: 313, text: "La connaissance s'accroît quand on la partage.", author: "Anonyme", category: ["Connaissance", "Partage"] },
+            { id: 314, text: "Le courage est d'avoir peur et de seller son cheval quand même.", author: "John Wayne", category: ["Courage", "Action"] },
+            { id: 315, text: "Un voyage de mille lieues commence toujours par un premier pas.", author: "Lao Tseu", category: ["Motivation", "Action", "Progrès"] },
+            { id: 316, text: "La folie est de croire que les mêmes causes produisent des effets différents.", author: "Albert Einstein", category: ["Sagesse", "Logique"] },
+            { id: 317, text: "Le seul véritable échec est de ne pas essayer.", author: "Anonyme", category: ["Motivation", "Échec", "Action"] },
+            { id: 318, text: "Faites ce que vous aimez, et vous ne travaillerez jamais un seul jour de votre vie.", author: "Confucius", category: ["Travail", "Motivation", "Bonheur"] },
+            { id: 319, text: "Il n'y a pas de problèmes, seulement des solutions.", author: "John Lennon", category: ["Positivité", "Solution"] },
+            { id: 320, text: "L'avenir appartient à ceux qui croient en la beauté de leurs rêves.", author: "Eleanor Roosevelt", category: ["Inspiration", "Rêve", "Avenir"] },
+            { id: 321, text: "La vraie richesse ne consiste pas en l'abondance des biens, mais dans la modération des désirs.", author: "Épictète", category: ["Sagesse", "Richesse", "Philosophie"] },
+            { id: 322, text: "La vie est un long apprentissage de la perte.", author: "Jean d'Ormesson", category: ["Vie", "Apprentissage"] },
+            { id: 323, text: "La meilleure vengeance est un succès éclatant.", author: "Frank Sinatra", category: ["Motivation", "Succès"] },
+            { id: 324, text: "Ce n'est pas la destination qui compte, c'est le voyage.", author: "Ralph Waldo Emerson", category: ["Vie", "Voyage", "Chemin"] },
+            { id: 325, text: "La gentillesse est toujours récompensée.", author: "Anonyme", category: ["Gentillesse", "Récompense"] }
         ];
 
         // Get DOM elements
@@ -417,6 +446,7 @@
         const categoryFilter = document.getElementById('categoryFilter');
         const quotesContainer = document.getElementById('quotesContainer');
         const resetFiltersButton = document.getElementById('resetFiltersButton'); // Get the new button
+        const currentYearSpan = document.getElementById('currentYear'); // Get the span for the year
 
         // Function to determine quote length type (no longer used for filtering, but could be for display if needed)
         const getQuoteLengthType = (text) => {
@@ -524,6 +554,8 @@
             populateCategories();
             categoryFilter.value = 'Toutes'; // Ensure "Toutes" is selected by default
             filterQuotes(); // Render all quotes initially
+            // Set the current year in the footer
+            currentYearSpan.textContent = new Date().getFullYear();
         };
     </script>
 
