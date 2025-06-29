@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citations Inspirantes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Pacifico&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Enhanced body background for a softer, animated "neon" feel */
+            background: linear-gradient(-45deg, #1A0033, #0A002A, #330055, #001A33); /* Deeper purples and blues */
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+        h1 {
+            font-family: 'Pacifico', cursive; /* A more playful font for the title */
+            /* Softer Neon-like glow effect, set to minimum luminosity (opacity 0.8) */
+            text-shadow: 0 0 5px #ffccff, 0 0 10px #ffccff, 0 0 20px #cc66ff, 0 0 30px #cc66ff, 0 0 40px #9900ff, 0 0 50px #9900ff;
+            opacity: 0.8; /* Set default opacity to the minimum blink state */
+        }
+        /* Custom scrollbar for quote cards if content overflows */
+        .quote-card-scroll {
+            max-height: 150px; /* Adjust as needed */
+            overflow-y: auto;
+            scrollbar-width: thin; /* Firefox */
+            scrollbar-color: #a78bfa #e0e7ff; /* Thumb and Track color for Firefox */
+        }
+        .quote-card-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .quote-card-scroll::-webkit-scrollbar-track {
+            background: #e0e7ff; /* Light purple-blue for track */
+            border-radius: 10px;
+        }
+        .quote-card-scroll::-webkit-scrollbar-thumb {
+            background-color: #a78bfa; /* Medium purple for thumb */
+            border-radius: 10px;
+            border: 2px solid #e0e7ff; /* Padding around thumb */
+        }
+        /* Neon effect for buttons, inputs, selects, and cards */
+        .neon-element {
+            box-shadow: 0 0 8px rgba(255, 153, 204, 0.7), 0 0 15px rgba(179, 102, 255, 0.7);
+            transition: all 0.3s ease-in-out;
+        }
+        .neon-element:hover {
+            box-shadow: 0 0 12px rgba(255, 153, 204, 0.9), 0 0 20px rgba(179, 102, 255, 0.9);
+            transform: scale(1.01); /* Subtle scale on hover for all elements */
+        }
+        .neon-element:focus {
+            box-shadow: 0 0 12px rgba(255, 153, 204, 0.9), 0 0 20px rgba(179, 102, 255, 0.9);
+            outline: none; /* Remove default outline */
+        }
+
+        /* Animation for the background gradient */
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Removed custom animation for slow blinking title */
+    </style>
+</head>
+<body class="min-h-screen font-sans p-4 flex flex-col items-center">
+
+    <header class="w-full max-w-4xl text-center py-8">
+        <h1 class="text-6xl font-extrabold text-white mb-4">
+            Citations Inspirantes
+        </h1>
+        <p class="text-lg text-gray-300">
+            Trouvez l'inspiration parmi une collection de citations célèbres.
+        </p>
+    </header>
+
+    <!-- Search and Filter Section -->
+    <div class="w-full max-w-4xl bg-white bg-opacity-10 backdrop-filter backdrop-blur-md p-6 rounded-xl shadow-lg mb-8 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4 border-2 border-purple-600 neon-element">
+        <!-- Search Input -->
+        <input
+            type="text"
+            id="searchTerm"
+            placeholder="Rechercher par auteur ou citation..."
+            class="flex-grow p-3 border-2 border-purple-500 rounded-lg focus:outline-none focus:ring-4 focus:ring-pink-400 transition duration-300 bg-gray-900 bg-opacity-30 text-white placeholder-gray-400 neon-element"
+        />
+
+        <!-- Category Dropdown -->
+        <select
+            id="categoryFilter"
+            class="p-3 border-2 border-purple-500 rounded-lg bg-gray-900 bg-opacity-30 text-white focus:outline-none focus:ring-4 focus:ring-pink-400 transition duration-300 cursor-pointer neon-element"
+        >
+            <!-- Options will be populated by JavaScript -->
+        </select>
+
+        <!-- Reset Filters Button -->
+        <button
+            id="resetFiltersButton"
+            class="px-6 py-3 bg-gradient-to-r from-pink-600 to-purple-700 text-white font-bold rounded-lg neon-element transform hover:scale-105 transition-all duration-300 ease-in-out"
+        >
+            Réinitialiser les filtres
+        </button>
+    </div>
+
+    <!-- Quotes Display Section -->
+    <div id="quotesContainer" class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Quotes will be populated by JavaScript -->
+    </div>
+
+    <script>
+        const allQuotes = [
+            { id: 1, text: "La seule façon de faire du bon travail est d'aimer ce que vous faites.", author: "Steve Jobs", category: ["Motivation", "Travail"] },
+            { id: 2, text: "La vie, c'est comme une bicyclette, il faut avancer pour ne pas perdre l'équilibre.", author: "Albert Einstein", category: ["Vie", "Sagesse"] },
+            { id: 3, text: "Soyez le changement que vous voulez voir dans le monde.", author: "Mahatma Gandhi", category: ["Inspiration", "Action", "Changement"] },
+            { id: 4, text: "L'imagination est plus importante que le savoir.", author: "Albert Einstein", category: ["Créativité", "Sagesse"] },
+            { id: 5, text: "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte.", author: "Winston Churchill", category: ["Motivation", "Persévérance"] },
+            { id: 6, text: "Il n'y a qu'une façon d'apprendre, c'est par l'action.", author: "Paulo Coelho", category: ["Apprentissage", "Action"] },
+            { id: 7, text: "Le bonheur ne se trouve pas, il se construit.", author: "Epicure", category: ["Bonheur", "Philosophie"] },
+            { id: 8, text: "Dans la vie, rien n'est à craindre, tout est à comprendre.", author: "Marie Curie", category: ["Sagesse", "Connaissance"] },
+            { id: 9, text: "Le seul véritable voyage de découverte ne consiste pas à chercher de nouveaux paysages, mais à avoir de nouveaux yeux.", author: "Marcel Proust", category: ["Réflexion", "Découverte"] },
+            { id: 10, text: "La perfection n'est pas atteignable, mais si nous la poursuivons, nous pouvons atteindre l'excellence.", author: "Vince Lombardi", category: ["Motivation", "Excellence"] },
+            { id: 11, text: "Fais de ta vie un rêve, et de tes rêves une réalité.", author: "Antoine de Saint-Exupéry", category: ["Inspiration", "Rêve", "Vie"] },
+            { id: 12, text: "Rien n'est permanent, sauf le changement.", author: "Héraclite", category: ["Philosophie", "Changement"] },
+            { id: 13, text: "Ne remets jamais à demain ce que tu peux faire le jour même.", author: "Benjamin Franklin", category: ["Productivité", "Sagesse"] },
+            { id: 14, text: "La simplicité est la sophistication suprême.", author: "Leonardo da Vinci", category: ["Design", "Sagesse"] },
+            { id: 15, text: "Le doute est le commencement de la sagesse.", author: "Aristote", category: ["Philosophie", "Sagesse"] },
+            { id: 16, text: "Le succès est la somme de petits efforts, répétés jour après jour.", author: "Robert Collier", category: ["Motivation", "Persévérance"] },
+            { id: 17, text: "La vie est ce qui arrive quand vous êtes occupé à faire d'autres projets.", author: "John Lennon", category: ["Vie", "Réflexion"] },
+            { id: 18, text: "Être libre, ce n'est pas seulement se débarrasser de ses chaînes; c'est vivre d'une façon qui respecte et renforce la liberté des autres.", author: "Nelson Mandela", category: ["Liberté", "Sagesse"] },
+            { id: 19, text: "Il est difficile d'échouer, mais il est encore plus difficile de ne pas avoir essayé.", author: "Theodore Roosevelt", category: ["Motivation", "Courage"] },
+            { id: 20, text: "Le meilleur moyen de prédire l'avenir est de le créer.", author: "Peter Drucker", category: ["Innovation", "Action"] },
+            { id: 21, text: "L'amour est la seule passion qui ne souffre ni passé ni avenir.", author: "Honoré de Balzac", category: ["Amour"] },
+            { id: 22, text: "L'amitié est une âme en deux corps.", author: "Aristote", category: ["Amitié"] },
+            { id: 23, text: "La chance sourit aux esprits préparés.", author: "Louis Pasteur", category: ["Chance", "Préparation"] },
+            { id: 24, text: "Le bonheur, c'est d'être bien avec soi-même.", author: "François de La Rochefoucauld", category: ["Bonheur", "Sagesse"] },
+            { id: 25, text: "Aimer, ce n'est pas se regarder l'un l'autre, c'est regarder ensemble dans la même direction.", author: "Antoine de Saint-Exupéry", category: ["Amour", "Relation"] },
+            { id: 26, text: "Un ami, c'est une personne avec qui on peut penser à voix haute.", author: "Ralph Waldo Emerson", category: ["Amitié", "Confiance"] },
+            { id: 27, text: "La chance, c'est l'occasion qui se présente et la volonté qui la saisit.", author: "Anonyme", category: ["Chance", "Action"] },
+            { id: 28, text: "Le bonheur est parfois une bénédiction, mais le plus souvent une conquête.", author: "Paulo Coelho", category: ["Bonheur", "Effort"] },
+            { id: 29, text: "L'amour est un art, l'art du bonheur.", author: "André Maurois", category: ["Amour", "Bonheur"] },
+            { id: 30, text: "L'amitié est comme le vin, elle se bonifie avec le temps.", author: "Proverbe", category: ["Amitié", "Temps"] },
+            { id: 31, text: "Le hasard, c'est Dieu qui se promène incognito.", author: "Albert Einstein", category: ["Chance", "Spiritualité"] },
+            { id: 32, text: "Le bonheur est une direction, pas une destination.", author: "Bouddha", category: ["Bonheur", "Philosophie"] },
+            { id: 33, text: "Il n'y a qu'un bonheur dans la vie, c'est d'aimer et d'être aimé.", author: "George Sand", category: ["Amour", "Bonheur"] },
+            { id: 34, text: "Les amis sont les frères que l'on choisit.", author: "Jean-Baptiste Alphonse Karr", category: ["Amitié", "Famille"] },
+            { id: 35, text: "La chance est une aptitude, non un miracle.", author: "Proverbe chinois", category: ["Chance", "Développement personnel"] },
+            { id: 36, text: "Le bonheur est le but de la vie.", author: "Aristote", category: ["Bonheur", "Philosophie"] },
+            { id: 37, text: "L'amour est la sagesse des fous et la folie des sages.", author: "Samuel Johnson", category: ["Amour", "Sagesse"] },
+            { id: 38, text: "L'amitié sans confiance, c'est une fleur sans parfum.", author: "Proverbe français", category: ["Amitié", "Confiance"] },
+            { id: 39, text: "La seule chose qu'on ne peut pas prendre, c'est la chance. On la crée.", author: "Anonyme", category: ["Chance", "Action"] },
+            { id: 40, text: "Le bonheur est dans le voyage, pas dans la destination.", author: "Anonyme", category: ["Bonheur", "Vie", "Voyage"] },
+            { id: 41, text: "Là où il y a de l'amour, il y a de la vie.", author: "Mahatma Gandhi", category: ["Amour", "Vie"] },
+            { id: 42, text: "Un véritable ami est celui qui entre quand le reste du monde sort.", author: "Walter Winchell", category: ["Amitié", "Soutien"] },
+            { id: 43, text: "La chance est ce qui arrive quand la préparation rencontre l'opportunité.", author: "Seneca", category: ["Chance", "Préparation"] },
+            { id: 44, text: "Le bonheur n'est pas une destination, c'est un mode de vie.", author: "Anonyme", category: ["Bonheur", "Philosophie"] },
+            { id: 45, text: "L'amour ne voit pas avec les yeux, mais avec l'âme.", author: "William Shakespeare", category: ["Amour", "Spiritualité"] },
+            { id: 46, text: "On ne choisit pas sa famille, mais on choisit ses amis.", author: "Anonyme", category: ["Amitié", "Famille"] },
+            { id: 47, text: "La persévérance est la bonne fortune du succès.", author: "Anonyme", category: ["Motivation", "Succès"] },
+            { id: 48, text: "Le bonheur, c'est la joie sans mélange.", author: "Blaise Pascal", category: ["Bonheur", "Joie"] },
+            { id: 49, text: "L'amour est le triomphe de l'imagination sur l'intelligence.", author: "Henry Louis Mencken", category: ["Amour", "Imagination"] },
+            { id: 50, text: "L'amitié est un parapluie qui abrite nos peines.", author: "Anonyme", category: ["Amitié", "Soutien"] },
+            { id: 51, text: "Il n'y a pas de chance, seulement des rendez-vous.", author: "Paul Eluard", category: ["Chance", "Destin"] },
+            { id: 52, text: "Le bonheur est une petite chose que l'on grignote, assise sur le pas de sa porte.", author: "Jean Giraudoux", category: ["Bonheur", "Simplicité"] },
+            { id: 53, text: "L'amour est un feu qui brûle sans qu'on le voie.", author: "Luís Vaz de Camões", category: ["Amour", "Passion"] },
+            { id: 54, text: "La vraie amitié, ce n'est pas d'être inséparables, c'est d'être séparés et que rien ne change.", author: "Anonyme", category: ["Amitié", "Confiance"] },
+            { id: 55, text: "La chance est une récolte que l'on doit semer.", author: "Anonyme", category: ["Chance", "Effort"] },
+            { id: 56, text: "Le bonheur est la seule chose qui se double si on la partage.", author: "Albert Schweitzer", category: ["Bonheur", "Partage"] },
+            { id: 57, text: "L'amour est la force la plus puissante au monde.", author: "Martin Luther King Jr.", category: ["Amour", "Force"] },
+            { id: 58, text: "L'amitié est la plus grande des consolations humaines.", author: "Cicéron", category: ["Amitié", "Réconfort"] },
+            { id: 59, text: "La chance est une loterie, mais on peut acheter plus de billets.", author: "Anonyme", category: ["Chance", "Action"] },
+            { id: 60, text: "Le bonheur est la clé du succès. Si vous aimez ce que vous faites, vous réussirez.", author: "Albert Schweitzer", category: ["Bonheur", "Succès", "Motivation"] },
+            { id: 61, text: "La plus grande joie de la vie est l'amour.", author: "Euripide", category: ["Amour", "Joie"] },
+            { id: 62, text: "L'amitié ne se mesure pas à l'ancienneté, mais à la sincérité.", author: "Anonyme", category: ["Amitié", "Sincérité"] },
+            { id: 63, text: "La chance n'existe pas. Il n'y a que le travail qui paie.", author: "Anonyme", category: ["Chance", "Travail", "Effort"] },
+            { id: 64, text: "Le bonheur est un choix, pas un résultat.", author: "Anonyme", category: ["Bonheur", "Choix"] },
+            { id: 65, text: "L'amour est comme le vent, on ne le voit pas, mais on le sent.", author: "Nicholas Sparks", category: ["Amour", "Nature"] },
+            { id: 66, text: "L'amitié est le refuge des âmes.", author: "Victor Hugo", category: ["Amitié", "Réconfort"] },
+            { id: 67, text: "La chance est une belle maîtresse, mais une mauvaise femme.", author: "Benjamin Franklin", category: ["Chance", "Sagesse"] },
+            { id: 68, text: "Le bonheur est un art de vivre.", author: "André Gide", category: ["Bonheur", "Art"] },
+            { id: 69, text: "L'amour est la poésie des sens.", author: "Honoré de Balzac", category: ["Amour", "Poésie"] },
+            { id: 70, text: "L'amitié ne demande rien en échange, sauf d'être entretenue.", author: "Jean de La Fontaine", category: ["Amitié", "Entretien"] },
+            { id: 71, text: "La chance ne frappe pas deux fois à la même porte.", author: "Proverbe", category: ["Chance", "Opportunité"] },
+            { id: 72, text: "Le bonheur est un état d'esprit.", author: "Anonyme", category: ["Bonheur", "Mental"] },
+            { id: 73, text: "Aimer, c'est donner sans compter.", author: "Anonyme", category: ["Amour", "Générosité"] },
+            { id: 74, text: "L'amitié, c'est savoir tout dire à l'autre sans jamais le blesser.", author: "Anonyme", category: ["Amitié", "Communication"] },
+            { id: 75, text: "La chance est une graine, il faut la semer pour qu'elle pousse.", author: "Anonyme", category: ["Chance", "Effort"] },
+            { id: 76, text: "Le bonheur n'est pas de tout avoir, mais de savoir apprécier ce que l'on a.", author: "Anonyme", category: ["Bonheur", "Gratitude"] },
+            { id: 77, text: "L'amour est la réponse, peu importe la question.", author: "Anonyme", category: ["Amour", "Spiritualité"] },
+            { id: 78, text: "L'amitié est le plus grand bienfait de l'homme.", author: "Anonyme", category: ["Amitié", "Humain"] },
+            { id: 79, text: "La chance, c'est l'absence de malchance.", author: "Anonyme", category: ["Chance"] },
+            { id: 80, text: "Le bonheur est un chemin que l'on trace soi-même.", author: "Anonyme", category: ["Bonheur", "Autonomie"] },
+            { id: 81, text: "L'amour est une force plus formidable que n'importe quelle autre. Il est invisible, on ne peut le voir ni le mesurer, mais il est assez puissant pour vous transformer en un instant et vous offrir plus de joie que n'importe quel bien matériel.", author: "Barbara De Angelis", category: ["Amour", "Transformation"] },
+            { id: 82, text: "L'amitié est le ciment qui unit le monde.", author: "Woodrow Wilson", category: ["Amitié", "Unité"] },
+            { id: 83, text: "Je suis un grand croyant en la chance, et je trouve que plus je travaille, plus j'en ai.", author: "Thomas Jefferson", category: ["Chance", "Travail"] },
+            { id: 84, text: "Le vrai bonheur ne dépend d'aucun être, d'aucun objet extérieur; il ne dépend que de nous.", author: "Dalaï Lama", category: ["Bonheur", "Autonomie", "Sagesse"] },
+            { id: 85, text: "L'amour est la seule folie dont on ne se relève jamais.", author: "Alfred de Musset", category: ["Amour", "Passion"] },
+            { id: 86, text: "Les grandes âmes ont de la volonté, les faibles n'ont que des souhaits.", author: "Proverbe chinois", category: ["Motivation", "Volonté"] },
+            { id: 87, text: "La meilleure façon de s'aimer soi-même est de s'accepter tel que l'on est.", author: "Bouddha", category: ["Sagesse", "Estime de soi"] },
+            { id: 88, text: "Le courage n'est pas l'absence de peur, mais le triomphe sur celle-ci.", author: "Nelson Mandela", category: ["Inspiration", "Courage"] },
+            { id: 89, text: "Ne pleure pas parce que c'est fini, souris parce que c'est arrivé.", author: "Dr. Seuss", category: ["Sagesse", "Positivité"] },
+            { id: 90, text: "La simplicité est la sophistication ultime.", author: "Leonardo da Vinci", category: ["Design", "Sagesse"] },
+            { id: 91, text: "On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux.", author: "Antoine de Saint-Exupéry", category: ["Sagesse", "Intuition"] },
+            { id: 92, text: "Chaque jour est une nouvelle opportunité. Saisissez-la !", author: "Anonyme", category: ["Motivation", "Opportunité"] },
+            { id: 93, text: "La folie, c'est de faire toujours la même chose et de s'attendre à un résultat différent.", author: "Albert Einstein", category: ["Sagesse", "Logique"] },
+            { id: 94, text: "Vivez comme si vous deviez mourir demain. Apprenez comme si vous deviez vivre toujours.", author: "Mahatma Gandhi", category: ["Apprentissage", "Vie", "Sagesse"] },
+            { id: 95, text: "Le succès est d'aller d'échec en échec sans perdre son enthousiasme.", author: "Winston Churchill", category: ["Motivation", "Persévérance"] },
+            { id: 96, text: "L'optimisme est la foi qui mène au succès.", author: "Helen Keller", category: ["Inspiration", "Optimisme", "Succès"] },
+            { id: 97, text: "La vie est une aventure audacieuse ou elle n'est rien du tout.", author: "Helen Keller", category: ["Vie", "Aventure"] },
+            { id: 98, text: "La connaissance s'acquiert par l'expérience.", author: "Albert Einstein", category: ["Apprentissage", "Expérience"] },
+            { id: 99, text: "Le changement est la loi de la vie. Et ceux qui ne regardent que le passé ou le présent rateront l'avenir.", author: "John F. Kennedy", category: ["Philosophie", "Changement", "Avenir"] },
+            { id: 100, text: "Le bonheur est une œuvre d'art : il faut la construire.", author: "Boris Vian", category: ["Bonheur", "Art"] },
+            { id: 101, text: "L'amour, ce n'est pas un grand feu, c'est une lumière qui ne s'éteint jamais.", author: "Anonyme", category: ["Amour", "Durabilité"] },
+            { id: 102, text: "L'amitié est le plus doux des baumes pour les blessures de l'âme.", author: "Anonyme", category: ["Amitié", "Réconfort"] },
+            { id: 103, text: "La chance frappe à toutes les portes, mais elle ne s'arrête que chez ceux qui la lui ouvrent.", author: "Anonyme", category: ["Chance", "Ouverture"] },
+            { id: 104, text: "Le bonheur, c'est de vivre sans regret.", author: "Anonyme", category: ["Bonheur", "Acceptation"] },
+            { id: 105, text: "L'amour est l'expression de la vérité et de la joie.", author: "Deepak Chopra", category: ["Amour", "Vérité", "Joie"] },
+            { id: 106, text: "Une amitié fidèle est une forteresse.", author: "Publilius Syrus", category: ["Amitié", "Fidélité"] },
+            { id: 107, text: "Ce n'est pas la chance qui manque, c'est l'audace.", author: "Anonyme", category: ["Chance", "Audace"] },
+            { id: 108, text: "Le bonheur est un papillon qui, poursuivi, ne se laisse jamais attraper, mais qui, si vous vous asseyez tranquillement, peut se poser sur vous.", author: "Nathaniel Hawthorne", category: ["Bonheur", "Patience"] },
+            { id: 109, text: "L'amour est un océan d'émotions entouré de côtes de raison.", author: "Jules Renard", category: ["Amour", "Émotion", "Raison"] },
+            { id: 110, text: "L'amitié est un don du ciel, la plus belle des preuves d'amour.", author: "Anonyme", category: ["Amitié", "Amour"] },
+            { id: 111, text: "La chance, c'est quand le travail et la persévérance rencontrent l'opportunité.", author: "Anonyme", category: ["Chance", "Travail", "Persévérance", "Opportunité"] },
+            { id: 112, text: "Le bonheur est une question d'équilibre.", author: "Anonyme", category: ["Bonheur", "Équilibre"] },
+            { id: 113, text: "L'amour est une fleur sauvage, belle et libre, rare et précieuse.", author: "Anonyme", category: ["Amour", "Liberté", "Beauté"] },
+            { id: 114, text: "Il n'y a pas d'amitié sans confiance ni de confiance sans intégrité.", author: "Samuel Johnson", category: ["Amitié", "Confiance", "Intégrité"] },
+            { id: 115, text: "On ne peut pas compter sur la chance, il faut la provoquer.", author: "Anonyme", category: ["Chance", "Action"] },
+            { id: 116, text: "Le bonheur n'est pas une destination, c'est un chemin.", author: "Anonyme", category: ["Bonheur", "Voyage"] },
+            { id: 117, text: "L'amour véritable n'a pas de fin.", author: "Anonyme", category: ["Amour", "Éternité"] },
+            { id: 118, text: "L'amitié est une main tendue dans les moments difficiles.", author: "Anonyme", category: ["Amitié", "Soutien"] },
+            { id: 119, text: "La chance, c'est le moment où l'opportunité rencontre la préparation.", author: "Anonyme", category: ["Chance", "Opportunité", "Préparation"] },
+            { id: 120, text: "Le bonheur est un choix conscient et une attitude intérieure.", author: "Anonyme", category: ["Bonheur", "Choix", "Attitude"] },
+            { id: 121, text: "L'amour est un acte de pardon infini, un regard tendre qui devient une habitude.", author: "Peter Ustinov", category: ["Amour", "Pardon"] },
+            { id: 122, text: "L'amitié est toujours un avantage.", author: "Aristote", category: ["Amitié", "Avantage"] },
+            { id: 123, text: "La chance est une compétence qui s'améliore avec la pratique.", author: "Anonyme", category: ["Chance", "Compétence", "Pratique"] },
+            { id: 124, text: "Le bonheur ne se trouve pas, il se crée.", author: "Anonyme", category: ["Bonheur", "Création"] },
+            { id: 125, text: "L'amour est l'espace et le temps mesurés par le cœur.", author: "Marcel Proust", category: ["Amour", "Temps", "Cœur"] },
+            { id: 126, text: "L'amitié est une perle rare.", author: "Anonyme", category: ["Amitié", "Rareté"] },
+            { id: 127, text: "La chance ne sourit qu'aux audacieux.", author: "Virgile", category: ["Chance", "Audace"] },
+            { id: 128, text: "Le bonheur est le parfum que l'on ne peut répandre sur les autres sans en recevoir quelques gouttes soi-même.", author: "Ralph Waldo Emerson", category: ["Bonheur", "Partage"] },
+            { id: 129, text: "L'amour n'est pas un sentiment, c'est un engagement.", author: "Anonyme", category: ["Amour", "Engagement"] },
+            { id: 130, text: "La vraie amitié résiste à tout.", author: "Anonyme", category: ["Amitié", "Résilience"] },
+            { id: 131, text: "La chance est la providence des grands esprits.", author: "Edgar Allan Poe", category: ["Chance", "Esprit"] },
+            { id: 132, text: "Le bonheur est le plus grand secret du monde.", author: "Anonyme", category: ["Bonheur", "Secret"] },
+            { id: 133, text: "L'amour est la lumière qui éclaire le monde.", author: "Anonyme", category: ["Amour", "Lumière"] },
+            { id: 134, text: "L'amitié est un doux fardeau.", author: "Anonyme", category: ["Amitié"] },
+            { id: 135, text: "La chance est aveugle, mais pas le destin.", author: "Anonyme", category: ["Chance", "Destin"] },
+            { id: 136, text: "Le bonheur est une fleur qui pousse dans le jardin de l'âme.", author: "Anonyme", category: ["Bonheur", "Âme"] },
+            { id: 137, text: "L'amour n'est pas un grand mot, c'est un grand geste.", author: "Anonyme", category: ["Amour", "Action"] },
+            { id: 138, text: "L'amitié est le trésor le plus précieux.", author: "Anonyme", category: ["Amitié", "Trésor"] },
+            { id: 139, text: "La chance, c'est la sueur qui sèche.", author: "Anonyme", category: ["Chance", "Travail"] },
+            { id: 140, text: "Le bonheur est le but de toute recherche.", author: "Anonyme", category: ["Bonheur", "Recherche"] },
+            { id: 141, text: "Le chemin du bonheur est de rendre les autres heureux.", author: "Anonyme", category: ["Bonheur", "Altruisme"] },
+            { id: 142, text: "La vraie amitié n'a pas besoin de mots.", author: "Anonyme", category: ["Amitié", "Silence"] },
+            { id: 143, text: "La chance est un chemin que l'on emprunte.", author: "Anonyme", category: ["Chance", "Chemin"] },
+            { id: 144, text: "Le bonheur est une attitude, pas une possession.", author: "Anonyme", category: ["Bonheur", "Attitude"] },
+            { id: 145, text: "L'amour est la musique des cœurs.", author: "Anonyme", category: ["Amour", "Musique"] },
+            { id: 146, text: "L'amitié est le seul remède à la haine.", author: "Anonyme", category: ["Amitié", "Paix"] },
+            { id: 147, text: "La chance est une force invisible.", author: "Anonyme", category: ["Chance"] },
+            { id: 148, text: "Le bonheur est un choix à faire chaque jour.", author: "Anonyme", category: ["Bonheur", "Choix"] },
+            { id: 149, text: "L'amour est le plus beau des voyages.", author: "Anonyme", category: ["Amour", "Voyage"] },
+            { id: 150, text: "L'amitié est le sourire de l'âme.", author: "Anonyme", category: ["Amitié", "Âme"] },
+            { id: 151, text: "La chance, c'est comme le vent, on ne sait jamais d'où elle vient.", author: "Anonyme", category: ["Chance", "Mystère"] },
+            { id: 152, text: "Le bonheur est une lumière qui brille en nous.", author: "Anonyme", category: ["Bonheur", "Lumière"] },
+            { id: 153, text: "L'amour est l'écho de l'éternité.", author: "Anonyme", category: ["Amour", "Éternité"] },
+            { id: 154, text: "L'amitié, c'est être là l'un pour l'autre, quoi qu'il arrive.", author: "Anonyme", category: ["Amitié", "Soutien"] },
+            { id: 155, text: "La chance est le fruit du travail et de la persévérance.", author: "Anonyme", category: ["Chance", "Travail", "Persévérance"] },
+            { id: 156, text: "Le bonheur est une quête sans fin.", author: "Anonyme", category: ["Bonheur", "Quête"] },
+            { id: 157, text: "L'amour est le moteur du monde.", author: "Anonyme", category: ["Amour", "Force"] },
+            { id: 158, text: "L'amitié est le plus grand cadeau de la vie.", author: "Anonyme", category: ["Amitié", "Cadeau"] },
+            { id: 159, text: "La chance est un équilibre entre le destin et le choix.", author: "Anonyme", category: ["Chance", "Destin", "Choix"] },
+            { id: 160, text: "Le bonheur, c'est de vivre l'instant présent.", author: "Anonyme", category: ["Bonheur", "Présent"] },
+            { id: 161, text: "L'amour est la seule richesse qui se multiplie en se divisant.", author: "Anonyme", category: ["Amour", "Partage", "Richesse"] },
+            { id: 162, text: "L'amitié, c'est être un avec l'autre, sans jamais se perdre.", author: "Anonyme", category: ["Amitié", "Unité"] },
+            { id: 163, text: "La chance est le coup de pouce du destin.", author: "Anonyme", category: ["Chance", "Destin"] },
+            { id: 164, text: "Le bonheur est une mélodie que l'on joue avec le cœur.", author: "Anonyme", category: ["Bonheur", "Musique", "Cœur"] },
+            { id: 165, text: "L'amour, c'est quand on voit la perfection chez quelqu'un qui n'est pas parfait.", author: "Anonyme", category: ["Amour", "Perfection", "Acceptation"] },
+            { id: 166, text: "L'amitié, c'est une épaule sur laquelle on peut pleurer.", author: "Anonyme", category: ["Amitié", "Soutien", "Réconfort"] },
+            { id: 167, text: "La chance est une opportunité à saisir.", author: "Anonyme", category: ["Chance", "Opportunité"] },
+            { id: 168, text: "Le bonheur est une sensation, pas une réalité.", author: "Anonyme", category: ["Bonheur", "Perception"] },
+            { id: 169, text: "L'amour est une promesse, l'amour est un souvenir, une fois donné jamais oublié, jamais laissé.", author: "John Lennon", category: ["Amour", "Promesse", "Souvenir"] },
+            { id: 170, text: "L'amitié, c'est être là pour l'autre, dans les bons comme les mauvais moments.", author: "Anonyme", category: ["Amitié", "Soutien"] },
+            { id: 171, text: "La chance, c'est quand la préparation rencontre l'opportunité.", author: "Seneca", category: ["Chance", "Préparation", "Opportunité"] },
+            { id: 172, text: "Le bonheur est un choix que l'on fait chaque matin.", author: "Anonyme", category: ["Bonheur", "Choix"] },
+            { id: 173, text: "L'amour est la plus grande des aventures.", author: "Anonyme", category: ["Amour", "Aventure"] },
+            { id: 174, text: "L'amitié est le sel de la vie.", author: "Anonyme", category: ["Amitié", "Essence"] },
+            { id: 175, text: "La chance, c'est savoir tirer parti de ce qui nous arrive.", author: "Anonyme", category: ["Chance", "Adaptation"] },
+            { id: 176, text: "Le bonheur est une attitude positive face à la vie.", author: "Anonyme", category: ["Bonheur", "Attitude", "Positivité"] },
+            { id: 177, text: "L'amour n'est pas seulement quelque chose que l'on ressent, c'est quelque chose que l'on fait.", author: "David Wilkerson", category: ["Amour", "Action", "Sentiment"] },
+            { id: 178, text: "L'amitié n'est pas une grande chose, c'est un million de petites choses.", author: "Anonyme", category: ["Amitié", "Petits gestes"] },
+            { id: 179, text: "La chance, c'est quand le talent rencontre l'opportunité.", author: "Anonyme", category: ["Chance", "Talent", "Opportunité"] },
+            { id: 180, text: "Le bonheur est un état d'esprit qui dépend de la façon dont on perçoit le monde.", author: "Anonyme", category: ["Bonheur", "Perception"] },
+            { id: 181, text: "L'amour est le langage universel.", author: "Anonyme", category: ["Amour", "Universalité"] },
+            { id: 182, text: "L'amitié est un refuge, une oasis dans le désert de la vie.", author: "Anonyme", category: ["Amitié", "Réconfort"] },
+            { id: 183, text: "La chance est une étoile filante, on doit la saisir au vol.", author: "Anonyme", category: ["Chance", "Opportunité"] },
+            { id: 184, text: "Le bonheur est une douce folie.", author: "Anonyme", category: ["Bonheur", "Folies"] },
+            { id: 185, text: "L'amour n'est pas aveugle, il voit juste ce qui compte.", author: "Anonyme", category: ["Amour", "Discernement"] },
+            { id: 186, text: "L'amitié, c'est la joie de partager.", author: "Anonyme", category: ["Amitié", "Partage", "Joie"] },
+            { id: 187, text: "La chance est une attitude, pas un événement.", author: "Anonyme", category: ["Chance", "Attitude"] },
+            { id: 188, text: "Le bonheur est une question d'attitude mentale.", author: "Anonyme", category: ["Bonheur", "Mental", "Attitude"] },
+            { id: 189, text: "L'amour est la force de l'univers.", author: "Anonyme", category: ["Amour", "Universel"] },
+            { id: 190, text: "L'amitié est la plus belle des musiques.", author: "Anonyme", category: ["Amitié", "Musique"] },
+            { id: 191, text: "La chance est une énergie positive.", author: "Anonyme", category: ["Chance", "Positivité"] },
+            { id: 192, text: "Le bonheur, c'est une lumière qui ne s'éteint jamais.", author: "Anonyme", category: ["Bonheur", "Lumière"] },
+            { id: 193, text: "L'amour est le plus grand don de tous.", author: "Anonyme", category: ["Amour", "Don"] },
+            { id: 194, text: "L'amitié est un lien qui ne se brise jamais.", author: "Anonyme", category: ["Amitié", "Lien"] },
+            { id: 195, text: "La chance est la voie du succès.", author: "Anonyme", category: ["Chance", "Succès"] },
+            { id: 196, text: "Le bonheur est une chose simple.", author: "Anonyme", category: ["Bonheur", "Simplicité"] },
+            { id: 197, text: "L'amour est la force qui nous pousse à avancer.", author: "Anonyme", category: ["Amour", "Force", "Avancement"] },
+            { id: 198, text: "L'amitié est un trésor à chérir.", author: "Anonyme", category: ["Amitié", "Trésor"] },
+            { id: 199, text: "La chance, c'est l'étincelle qui allume le feu.", author: "Anonyme", category: ["Chance", "Étincelle"] },
+            { id: 200, text: "Le bonheur est un choix que nous faisons à chaque instant.", author: "Anonyme", category: ["Bonheur", "Choix", "Présent"] },
+            { id: 201, text: "La patience est amère, mais son fruit est doux.", author: "Jean-Jacques Rousseau", category: ["Sagesse", "Patience"] },
+            { id: 202, text: "L'échec est le fondement de la réussite.", author: "Lao Tseu", category: ["Motivation", "Échec", "Réussite"] },
+            { id: 203, text: "Le temps est un grand maître, dit-on, le seul maître qui ne tue pas ses élèves.", author: "Hector Berlioz", category: ["Temps", "Sagesse"] },
+            { id: 204, text: "La liberté commence où l'ignorance finit.", author: "Victor Hugo", category: ["Liberté", "Connaissance"] },
+            { id: 205, text: "Le respect est une monnaie que l'on dépense pour en recevoir.", author: "Anonyme", category: ["Sagesse", "Respect"] },
+            { id: 206, text: "La connaissance de soi est le commencement de toute sagesse.", author: "Aristote", category: ["Sagesse", "Connaissance de soi"] },
+            { id: 207, text: "La vie est un mystère qu'il faut vivre, et non un problème à résoudre.", author: "Gandhi", category: ["Vie", "Mystère", "Philosophie"] },
+            { id: 208, text: "La créativité est l'intelligence qui s'amuse.", author: "Albert Einstein", category: ["Créativité", "Intelligence"] },
+            { id: 209, text: "Agissez comme s'il était impossible d'échouer.", author: "Winston Churchill", category: ["Motivation", "Action"] },
+            { id: 210, text: "La beauté est dans les yeux de celui qui regarde.", author: "Oscar Wilde", category: ["Beauté", "Perception"] },
+            { id: 211, text: "Ce n'est pas ce que tu as, c'est ce que tu en fais.", author: "Anonyme", category: ["Vie", "Action"] },
+            { id: 212, text: "La vie est trop courte pour la passer à regretter.", author: "Anonyme", category: ["Vie", "Regret"] },
+            { id: 213, text: "L'art de la vie est moins de trouver que de créer le bonheur.", author: "Édouard Manet", category: ["Bonheur", "Création", "Art"] },
+            { id: 214, text: "Le succès est un mauvais professeur. Il pousse les gens intelligents à penser qu'ils ne peuvent pas perdre.", author: "Bill Gates", category: ["Motivation", "Succès"] },
+            { id: 215, text: "La vraie générosité envers l'avenir consiste à tout donner au présent.", author: "Albert Camus", category: ["Philosophie", "Générosité", "Présent"] },
+            { id: 216, text: "Ce n'est pas le plus fort de l'espèce qui survit, ni le plus intelligent. C'est celui qui sait le mieux s'adapter au changement.", author: "Charles Darwin", category: ["Adaptation", "Changement", "Sagesse"] },
+            { id: 217, text: "La curiosité est le début de la sagesse.", author: "Anonyme", category: ["Sagesse", "Curiosité"] },
+            { id: 218, text: "Le voyage est la seule chose que l'on achète qui nous rende plus riche.", author: "Anonyme", category: ["Voyage", "Richesse"] },
+            { id: 219, text: "Chaque pas est un pas de plus vers l'objectif.", author: "Anonyme", category: ["Motivation", "Progrès"] },
+            { id: 220, text: "La vie est un équilibre entre tenir et lâcher prise.", author: "Rumi", category: ["Vie", "Équilibre", "Sagesse"] },
+            { id: 221, text: "La patience et la persévérance ont un effet magique devant lequel les difficultés disparaissent et les obstacles s'évanouissent.", author: "John Quincy Adams", category: ["Motivation", "Patience", "Persévérance"] },
+            { id: 222, text: "Le pardon libère l'âme, il supprime la peur. C'est pourquoi il est un moyen si puissant de véritablement guérir et de se sentir bien.", author: "Nelson Mandela", category: ["Sagesse", "Pardon", "Liberté"] },
+            { id: 223, text: "La plus grande gloire n'est pas de ne jamais tomber, mais de se relever à chaque chute.", author: "Confucius", category: ["Résilience", "Motivation"] },
+            { id: 224, text: "L'éducation est l'arme la plus puissante que vous puissiez utiliser pour changer le monde.", author: "Nelson Mandela", category: ["Éducation", "Changement"] },
+            { id: 225, text: "Ce n'est pas la force, mais la persévérance, qui réalise les grandes œuvres.", author: "Samuel Johnson", category: ["Motivation", "Persévérance"] },
+            { id: 226, text: "La vie, c'est comme une boîte de chocolats : on ne sait jamais sur quoi on va tomber.", author: "Forrest Gump", category: ["Vie", "Hasard"] },
+            { id: 227, text: "Le rire est le soleil qui chasse l'hiver du visage humain.", author: "Victor Hugo", category: ["Bonheur", "Rire", "Joie"] },
+            { id: 228, text: "Les rêves ne sont pas ceux que l'on fait en dormant, mais ceux qui nous empêchent de dormir.", author: "Anonyme", category: ["Rêve", "Motivation"] },
+            { id: 229, text: "L'imagination est le début de la création.", author: "George Bernard Shaw", category: ["Créativité", "Imagination"] },
+            { id: 230, text: "Le doute est souvent une marque d'intelligence.", author: "Anonyme", category: ["Sagesse", "Doute"] },
+            { id: 231, text: "Chaque moment est une seconde chance.", author: "Anonyme", category: ["Opportunité", "Vie"] },
+            { id: 232, text: "La vie est courte, mais large.", author: "Anonyme", category: ["Vie", "Réflexion"] },
+            { id: 233, text: "Le bonheur est une fleur qui ne s'épanouit que dans l'âme.", author: "Anonyme", category: ["Bonheur", "Âme"] },
+            { id: 234, text: "La gentillesse est le langage que les sourds peuvent entendre et les aveugles peuvent voir.", author: "Mark Twain", category: ["Gentillesse", "Compassion"] },
+            { id: 235, text: "La sagesse est d'avoir des rêves assez grands pour ne pas les perdre de vue quand on les poursuit.", author: "Oscar Wilde", category: ["Sagesse", "Rêve", "Ambition"] },
+            { id: 236, text: "Le succès est la somme de petits efforts, répétés jour après jour.", author: "Robert Collier", category: ["Motivation", "Persévérance", "Succès"] },
+            { id: 237, text: "Le secret pour avancer est de commencer.", author: "Mark Twain", category: ["Action", "Motivation"] },
+            { id: 238, text: "La vie est une pièce de théâtre : ce qui compte, ce n'est pas qu'elle soit longue, mais qu'elle soit bien jouée.", author: "Sénèque", category: ["Vie", "Sagesse"] },
+            { id: 239, text: "Le savoir est une arme.", author: "Anonyme", category: ["Connaissance", "Pouvoir"] },
+            { id: 240, text: "La seule limite à notre épanouissement de demain sera nos doutes d'aujourd'hui.", author: "Franklin D. Roosevelt", category: ["Motivation", "Doute", "Épanouissement"] },
+            { id: 241, text: "L'amour est l'espace dans lequel la liberté et la conscience peuvent s'épanouir.", author: "Jiddu Krishnamurti", category: ["Amour", "Liberté", "Conscience"] },
+            { id: 242, text: "L'amitié est le plus grand des biens.", author: "La Bruyère", category: ["Amitié", "Valeur"] },
+            { id: 243, text: "La chance n'est jamais donnée, elle est toujours prise.", author: "Anonyme", category: ["Chance", "Action"] },
+            { id: 244, text: "Le bonheur ne se trouve pas au bout du chemin, il est le chemin lui-même.", author: "Anonyme", category: ["Bonheur", "Chemin", "Philosophie"] },
+            { id: 245, text: "L'amour est l'élan de la vie.", author: "Anonyme", category: ["Amour", "Vie"] },
+            { id: 246, text: "L'amitié est une main que l'on tend.", author: "Anonyme", category: ["Amitié", "Soutien"] },
+            { id: 247, text: "La chance, c'est comme une fleur rare, il faut la cultiver.", author: "Anonyme", category: ["Chance", "Cultiver"] },
+            { id: 248, text: "Le bonheur est un art qui s'apprend.", author: "Anonyme", category: ["Bonheur", "Apprentissage", "Art"] },
+            { id: 249, text: "L'amour, c'est voir l'invisible.", author: "Anonyme", category: ["Amour", "Spiritualité"] },
+            { id: 250, text: "L'amitié, c'est le miroir de l'âme.", author: "Anonyme", category: ["Amitié", "Âme"] },
+            { id: 251, text: "La chance, c'est le hasard qui se met au service de l'homme.", author: "Anonyme", category: ["Chance", "Hasard"] },
+            { id: 252, text: "Le bonheur est une graine, il faut l'arroser pour qu'elle pousse.", author: "Anonyme", category: ["Bonheur", "Croissance"] },
+            { id: 253, text: "L'amour est l'essence de l'univers.", author: "Anonyme", category: ["Amour", "Universel"] },
+            { id: 254, text: "L'amitié est une force qui unit les cœurs.", author: "Anonyme", category: ["Amitié", "Unité"] },
+            { id: 255, text: "La chance est une opportunité déguisée.", author: "Anonyme", category: ["Chance", "Opportunité"] },
+            { id: 256, text: "Le bonheur est un trésor que l'on partage.", author: "Anonyme", category: ["Bonheur", "Partage"] },
+            { id: 257, text: "L'amour est un mystère sans fin.", author: "Anonyme", category: ["Amour", "Mystère"] },
+            { id: 258, text: "L'amitié est un lien qui ne se brise jamais.", author: "Anonyme", category: ["Amitié", "Lien"] },
+            { id: 259, text: "La chance est une fée qui nous sourit.", author: "Anonyme", category: ["Chance", "Magie"] },
+            { id: 260, text: "Le bonheur est un état d'esprit, pas une possession.", author: "Anonyme", category: ["Bonheur", "Mental", "Choix"] },
+            { id: 261, text: "L'amour est la vérité de l'âme.", author: "Anonyme", category: ["Amour", "Vérité", "Âme"] },
+            { id: 262, text: "L'amitié est un voyage sans fin.", author: "Anonyme", category: ["Amitié", "Voyage"] },
+            { id: 263, text: "La chance est la providence des travailleurs.", author: "Anonyme", category: ["Chance", "Travail"] },
+            { id: 264, text: "Le bonheur est une lumière qui nous guide.", author: "Anonyme", category: ["Bonheur", "Lumière"] },
+            { id: 265, text: "L'amour est un don précieux.", author: "Anonyme", category: ["Amour", "Don"] },
+            { id: 266, text: "L'amitié est un rayon de soleil dans la vie.", author: "Anonyme", category: ["Amitié", "Joie"] },
+            { id: 267, text: "La chance est un chemin que l'on trace.", author: "Anonyme", category: ["Chance", "Chemin"] },
+            { id: 268, text: "Le bonheur est un choix à faire chaque jour.", author: "Anonyme", category: ["Bonheur", "Choix"] },
+            { id: 269, text: "L'amour est le plus grand des pouvoirs.", author: "Anonyme", category: ["Amour", "Pouvoir"] },
+            { id: 270, text: "L'amitié est le refuge de l'âme.", author: "Anonyme", category: ["Amitié", "Âme", "Réconfort"] },
+            { id: 271, text: "La chance, c'est l'opportunité de l'instant.", author: "Anonyme", category: ["Chance", "Opportunité"] },
+            { id: 272, text: "Le bonheur est un art de vivre.", author: "Anonyme", category: ["Bonheur", "Art de vivre"] },
+            { id: 273, text: "L'amour est la source de toute joie.", author: "Anonyme", category: ["Amour", "Joie"] },
+            { id: 274, text: "L'amitié est un baume pour le cœur.", author: "Anonyme", category: ["Amitié", "Cœur"] },
+            { id: 275, text: "La chance, c'est le vent qui pousse les voiles.", author: "Anonyme", category: ["Chance", "Guidance"] },
+            { id: 276, text: "Le bonheur est un trésor que l'on garde précieusement.", author: "Anonyme", category: ["Bonheur", "Trésor"] },
+            { id: 277, text: "L'amour est le reflet de l'âme.", author: "Anonyme", category: ["Amour", "Réflexion", "Âme"] },
+            { id: 278, text: "L'amitié est un soutien inconditionnel.", author: "Anonyme", category: ["Amitié", "Soutien"] },
+            { id: 279, text: "La chance est une occasion à saisir.", author: "Anonyme", category: ["Chance", "Opportunité"] },
+            { id: 280, text: "Le bonheur est un état d'esprit positif.", author: "Anonyme", category: ["Bonheur", "Mental", "Positivité"] },
+            { id: 281, text: "L'amour est le chemin du bonheur.", author: "Anonyme", category: ["Amour", "Bonheur"] },
+            { id: 282, text: "L'amitié est un lien sacré.", author: "Anonyme", category: ["Amitié", "Sacré"] },
+            { id: 283, text: "La chance, c'est quand on est au bon endroit au bon moment.", author: "Anonyme", category: ["Chance", "Timing", "Opportunité"] },
+            { id: 284, text: "Le bonheur est un chemin que l'on parcourt avec amour.", author: "Anonyme", category: ["Bonheur", "Amour", "Chemin"] },
+            { id: 285, text: "L'amour est la plus belle des folies.", author: "Anonyme", category: ["Amour", "Folies"] },
+            { id: 286, text: "L'amitié est le plus beau des cadeaux.", author: "Anonyme", category: ["Amitié", "Cadeau"] },
+            { id: 287, text: "La chance, c'est la vie qui nous sourit.", author: "Anonyme", category: ["Chance", "Vie"] },
+            { id: 288, text: "Le bonheur est un sourire que l'on partage.", author: "Anonyme", category: ["Bonheur", "Partage", "Sourire"] },
+            { id: 289, text: "L'amour est une flamme qui ne s'éteint jamais.", author: "Anonyme", category: ["Amour", "Flamme", "Éternité"] },
+            { id: 290, text: "L'amitié est une fleur qui ne fane jamais.", author: "Anonyme", category: ["Amitié", "Durabilité"] },
+            { id: 291, text: "La chance, c'est une aide inattendue.", author: "Anonyme", category: ["Chance", "Aide"] },
+            { id: 292, text: "Le bonheur est un trésor à découvrir.", author: "Anonyme", category: ["Bonheur", "Découverte"] },
+            { id: 293, text: "L'amour est l'expression de l'âme.", author: "Anonyme", category: ["Amour", "Âme"] },
+            { id: 294, text: "L'amitié est une force qui nous pousse à avancer.", author: "Anonyme", category: ["Amitié", "Force", "Motivation"] },
+            { id: 295, text: "La chance, c'est la reconnaissance des opportunités.", author: "Anonyme", category: ["Chance", "Reconnaissance", "Opportunité"] },
+            { id: 296, text: "Le bonheur est une chose précieuse.", author: "Anonyme", category: ["Bonheur", "Valeur"] },
+            { id: 297, text: "L'amour est la lumière qui éclaire nos vies.", author: "Anonyme", category: ["Amour", "Lumière"] },
+            { id: 298, text: "L'amitié est le plus grand des biens.", author: "Anonyme", category: ["Amitié", "Bienfait"] },
+            { id: 299, text: "La chance est le coup de pouce du destin.", author: "Anonyme", category: ["Chance", "Destin"] },
+            { id: 300, text: "Le bonheur est une chose qui se multiplie en se partageant.", author: "Anonyme", category: ["Bonheur", "Partage"] },
+            { id: 301, text: "Au lieu de rêver ta vie, vis ton rêve.", author: "Anonyme", category: ["Inspiration", "Rêve", "Action"] }
+        ];
+
+        // Get DOM elements
+        const searchTermInput = document.getElementById('searchTerm');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const quotesContainer = document.getElementById('quotesContainer');
+        const resetFiltersButton = document.getElementById('resetFiltersButton'); // Get the new button
+
+        // Function to determine quote length type (no longer used for filtering, but could be for display if needed)
+        const getQuoteLengthType = (text) => {
+            const length = text.length;
+            if (length < 50) return 'Courte';
+            if (length < 100) return 'Moyenne';
+            return 'Longue';
+        };
+
+        // Function to render quotes
+        const renderQuotes = (quotesToDisplay) => {
+            quotesContainer.innerHTML = ''; // Clear previous quotes
+
+            if (quotesToDisplay.length === 0) {
+                quotesContainer.innerHTML = `
+                    <p class="text-center text-gray-100 text-xl col-span-full">
+                        Aucune citation trouvée correspondant à vos critères de recherche.
+                    </p>
+                `;
+                return;
+            }
+
+            quotesToDisplay.forEach(quote => {
+                const quoteCard = document.createElement('div');
+                // Added new glow-effect class for quote cards
+                quoteCard.className = 'bg-gray-900 bg-opacity-30 backdrop-filter backdrop-blur-sm p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-xl flex flex-col justify-between border border-purple-700 neon-element';
+                quoteCard.innerHTML = `
+                    <p class="text-gray-200 text-lg italic mb-4 quote-card-scroll">"${quote.text}"</p>
+                    <p class="text-right text-pink-300 font-semibold">- ${quote.author}</p>
+                    <p class="text-right text-sm text-purple-300 mt-2">Catégorie: ${Array.isArray(quote.category) ? quote.category.join(', ') : quote.category}</p>
+                `;
+                quotesContainer.appendChild(quoteCard);
+            });
+        };
+
+        // Function to filter quotes
+        const filterQuotes = () => {
+            let currentQuotes = allQuotes.map(quote => ({
+                ...quote,
+                lengthType: getQuoteLengthType(quote.text)
+            }));
+
+            const searchTerm = searchTermInput.value.toLowerCase();
+            const selectedCategory = categoryFilter.value;
+
+            // Filter by category
+            if (selectedCategory !== 'Toutes') {
+                currentQuotes = currentQuotes.filter(quote => 
+                    Array.isArray(quote.category) ? 
+                    quote.category.includes(selectedCategory) : 
+                    quote.category === selectedCategory
+                );
+            }
+
+            // Filter by search term (author or text)
+            if (searchTerm) {
+                currentQuotes = currentQuotes.filter(
+                    quote =>
+                        quote.author.toLowerCase().includes(searchTerm) ||
+                        quote.text.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            renderQuotes(currentQuotes);
+        };
+
+        // Function to populate category dropdown
+        const populateCategories = () => {
+            // Collect all unique categories from all quotes, handling arrays
+            const allUniqueCategories = new Set();
+            allQuotes.forEach(quote => {
+                if (Array.isArray(quote.category)) {
+                    quote.category.forEach(cat => allUniqueCategories.add(cat));
+                } else {
+                    allUniqueCategories.add(quote.category);
+                }
+            });
+
+            const categories = ['Toutes', ...Array.from(allUniqueCategories)].sort();
+            categoryFilter.innerHTML = ''; // Clear existing options
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                // Style options for dark background
+                option.className = 'bg-gray-900 text-gray-200';
+                categoryFilter.appendChild(option);
+            });
+        };
+
+        // Function to reset all filters
+        const resetFilters = () => {
+            searchTermInput.value = ''; // Clear search input
+            categoryFilter.value = 'Toutes'; // Reset category to 'Toutes'
+            filterQuotes(); // Re-render quotes with no filters applied
+        };
+
+        // Event Listeners
+        searchTermInput.addEventListener('input', filterQuotes);
+        categoryFilter.addEventListener('change', filterQuotes);
+        resetFiltersButton.addEventListener('click', resetFilters); // Add event listener for the new button
+
+        // Initial render on page load
+        window.onload = () => {
+            populateCategories();
+            categoryFilter.value = 'Toutes'; // Ensure "Toutes" is selected by default
+            filterQuotes(); // Render all quotes initially
+        };
+    </script>
+
+</body>
+</html>
